@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "timezone": "Asia/Ho_Chi_Minh",
+  "quests": [
+    {
+      "questId": "daily-training",
+      "aliases": ["Đào tạo hằng ngày", "Daily Training"],
+      "icon": "icons/daily-training.png",
+      "objective": "Complete the daily training objective.",
+      "destinations": ["training-ground"],
+      "completionSignals": ["reward-claimed", "daily-training-complete"],
+      "cadence": "daily",
+      "opensAt": "04:00",
+      "expiresAt": "23:59",
+      "priority": 10
+    },
+    {
+      "questId": "weekly-party",
+      "aliases": ["Nhiệm vụ tổ đội hằng tuần", "Weekly Party"],
+      "icon": "icons/weekly-party.png",
+      "objective": "Complete the weekly party objective.",
+      "destinations": ["party-dungeon"],
+      "completionSignals": ["reward-claimed", "weekly-party-complete"],
+      "cadence": "weekly",
+      "opensAt": "12:30",
+      "expiresAt": "12:29",
+      "priority": 20
+    }
+  ]
+}

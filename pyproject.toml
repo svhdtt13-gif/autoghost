@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qnyh-ui-automation"
+version = "0.1.0"
+description = "Safe, UI-only orchestration foundation for qnyh clients"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["tzdata>=2024.1"]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
+windows = ["pywin32>=306"]
+desktop = ["PySide6>=6.7", "pywin32>=306"]
+vision = ["mss>=9.0", "numpy>=1.24", "opencv-python>=4.9", "pillow>=10.0"]
+ocr = ["paddleocr>=2.7", "paddlepaddle>=3.0"]
+
+[project.scripts]
+qnyh-tool = "qnyh_tool.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

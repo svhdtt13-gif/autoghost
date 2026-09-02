@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "profiles": [
+    {
+      "profile_id": "vi-default",
+      "language": "vi",
+      "skin": "default",
+      "layout": "standard",
+      "scale": 1.0,
+      "locators": [
+        {
+          "name": "quest_panel",
+          "kind": "anchor",
+          "reference": "templates/quest-panel.png",
+          "min_confidence": 0.85
+        },
+        {
+          "name": "quest_text",
+          "kind": "ocr",
+          "reference": "vi.quest_text",
+          "min_confidence": 0.8
+        }
+      ]
+    }
+  ]
+}

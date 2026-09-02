@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "safety_mode": "observation",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "selected_clients": [],
+  "paths": {
+    "profiles": "profiles",
+    "task_catalog": "tasks/catalog.json",
+    "schedules": "schedules",
+    "logs": "logs",
+    "screenshots": "screenshots",
+    "checkpoints": "checkpoints",
+    "calibration": "calibration"
+  }
+}

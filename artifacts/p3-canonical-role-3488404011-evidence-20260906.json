@@ -1,0 +1,62 @@
+{
+  "date": "2026-09-06",
+  "phase": "P3 Canonical Vận chuyển",
+  "reviewStatus": "READY_FOR_CHATGPT_REVIEW",
+  "reviewPackage": "docs/P3_CANONICAL_REVIEW_2026-09-06.md",
+  "decisionBasis": "DEC-026 / Issue #1",
+  "sourceFlow": "https://github.com/svhdtt13-gif/autoghost/blob/main/S%C6%A0%20%C4%90%E1%BB%92.docx",
+  "roleId": "3488404011",
+  "windowId": 10885552,
+  "windowTitle": "Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]",
+  "sourceDocument": "SƠ ĐỒ.source.docx",
+  "sourceFlowId": "B1",
+  "actions": [
+    "B1-open-activity-board",
+    "B2-close-activity-board",
+    "B3-open-failed-transport-detail",
+    "B4-abandon-failed-transport",
+    "B5-confirm-abandon-failed-transport",
+    "B6-reopen-activity-board-after-abandon",
+    "B7-join-transport-after-abandon",
+    "B8-select-guild-transport-at-master",
+    "B9-continue-transport-dialogue",
+    "scan-item-02",
+    "scan-item-03",
+    "scan-item-04",
+    "scan-item-05",
+    "scan-item-06",
+    "scan-item-07",
+    "scan-item-08"
+  ],
+  "postState": {
+    "screen": "Chuyển hàng",
+    "requiredItemSlots": 8,
+    "observedCounts": ["0/2", "0/20", "0/20", "0/20", "0/1", "0/20", "0/20", "0/5"],
+    "items": [
+      {"slot": 1, "name": "Trân Châu", "required": 2, "observed": "0/2"},
+      {"slot": 2, "name": "Hồng Hoa Hoàn", "required": 20, "observed": "0/20"},
+      {"slot": 3, "name": "Xích Thước Hoàn", "required": 20, "observed": "0/20"},
+      {"slot": 4, "name": "Bánh Củ Hoàng", "required": 20, "observed": "0/20"},
+      {"slot": 5, "name": "Đào Hoa Thạch", "required": 1, "observed": "0/1"},
+      {"slot": 6, "name": "Lăng Tiêu Hoàn", "required": 20, "observed": "0/20"},
+      {"slot": 7, "name": "Canh Ngũ Sắc", "required": 20, "observed": "0/20"},
+      {"slot": 8, "name": "Gà Hoa Tuyết", "required": 5, "observed": "0/5"}
+    ],
+    "specialItemComparison": "PENDING_USER_SPECIAL_ITEM_LIST",
+    "specialItemConfig": "not available in current V1 scope; no special-item alert emitted",
+    "semanticEvidence": ["Chuyển hàng", "Bốc xếp hàng", "Trân Châu"],
+    "prohibitedControlsObserved": ["Mua Và Đưa Vào", "Cầu viện 0/3"],
+    "nextAction": "SAFE_STOP; no item purchase, submission, or turn-in performed",
+    "reviewNote": "Manual supervised canonical verification only; AutoGhost app remains dry-run-only."
+  },
+  "evidenceImage": "p3-canonical-role-3488404011-after-transport-dialogue-20260906.jpg",
+  "scanEvidenceImages": [
+    "p3-canonical-role-3488404011-scan-item-02-20260906.jpg",
+    "p3-canonical-role-3488404011-scan-item-03-20260906.jpg",
+    "p3-canonical-role-3488404011-scan-item-04-20260906.jpg",
+    "p3-canonical-role-3488404011-scan-item-05-20260906.jpg",
+    "p3-canonical-role-3488404011-scan-item-06-20260906.jpg",
+    "p3-canonical-role-3488404011-scan-item-07-20260906.jpg",
+    "p3-canonical-role-3488404011-scan-item-08-20260906.jpg"
+  ]
+}

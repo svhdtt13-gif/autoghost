@@ -1,0 +1,65 @@
+{
+  "probe": "P3.1A Safe Navigation Probe",
+  "timestampUtc": "2026-09-06T12:21:54.562Z",
+  "status": "SAFE_STOP",
+  "target": {
+    "roleId": "3488404011",
+    "windowId": 10885552,
+    "app": "process:C:\\Ghost Story\\qnyh.exe",
+    "title": "Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]",
+    "returnedCandidateCount": 1
+  },
+  "preState": {
+    "accessibilityTree": "Window: \"Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]\", App: qnyh.exe.\n\\t0 window Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011] Secondary Actions: Raise\n\\t\\t1 title bar\n\\t\\t\\t2 menu bar System ID: MenuBar\n\\t\\t\\t\\t3 menu item System\n\\t\\t\\t\\t4 button Minimize\n\\t\\t\\t\\t5 button Maximize\n\\t\\t\\t\\t6 button Close",
+    "screenshot": {
+      "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1a-role-3488404011-pre.jpg",
+      "format": "image/jpeg",
+      "width": 235,
+      "height": 173,
+      "originX": 381,
+      "originY": 116,
+      "zIndex": 0
+    }
+  },
+  "anchorAssessment": {
+    "requestedPanel": "Vận chuyển",
+    "identified": false,
+    "confidence": "insufficient",
+    "reason": "The accessibility tree exposes only the native title bar; the game canvas has no semantic labels. The observed 235x173 visual surface does not provide a uniquely identifiable Vận chuyển anchor, so a visual icon click would be an unsafe guess."
+  },
+  "guards": {
+    "roleMatch": true,
+    "targetWindowStableDuringObservation": true,
+    "foregroundCurrentApi": "not_exposed",
+    "killSwitchCurrentApi": "not_exposed",
+    "priorContextEvidence": {
+      "source": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1-ui-evidence-2026-09-06.json",
+      "roleId": "3488404011",
+      "processId": 45120,
+      "windowHandle": "0xA619B0",
+      "desktopName": "Default",
+      "isForeground": false,
+      "killSwitchActive": false,
+      "note": "Historical artifact; not treated as a current foreground or Kill Switch authorization."
+    }
+  },
+  "action": {
+    "navigationClickCount": 0,
+    "inputSent": 0,
+    "windowActivated": false,
+    "gameStateMutationRequested": false
+  },
+  "postDecisionVerification": {
+    "sameWindowId": true,
+    "sameRoleTitle": true,
+    "screenshot": {
+      "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1a-role-3488404011-post-no-action.jpg",
+      "format": "image/jpeg",
+      "width": 235,
+      "height": 173,
+      "originX": 381,
+      "originY": 116,
+      "zIndex": 0
+    }
+  }
+}

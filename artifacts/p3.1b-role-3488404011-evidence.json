@@ -1,0 +1,599 @@
+{
+  "probe": "P3.1B Vision-First Discovery",
+  "timestampUtc": "2026-09-06T12:30:35.930Z",
+  "status": "DISCOVERY_ONLY_NO_CLICK",
+  "target": {
+    "roleId": "3488404011",
+    "windowId": 10885552,
+    "app": "process:C:\\Ghost Story\\qnyh.exe",
+    "title": "Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]",
+    "returnedCandidateCount": 1
+  },
+  "identityCrossCheck": {
+    "sourceArtifact": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1-ui-evidence-2026-09-06.json",
+    "historicalProcessId": 45120,
+    "historicalWindowHandle": "0xA619B0",
+    "desktopName": "Default",
+    "historicalForeground": false,
+    "note": "Current @oai/sky surface exposes only opaque window.id; cross-check is historical and not current authorization."
+  },
+  "capture": {
+    "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1b-role-3488404011-capture.jpg",
+    "width": 235,
+    "height": 173,
+    "originX": 381,
+    "originY": 116,
+    "zIndex": 0,
+    "accessibilityTree": "Window: \"Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]\", App: qnyh.exe.\n\t0 window Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011] Secondary Actions: Raise\n\t\t1 title bar\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close"
+  },
+  "normalization": {
+    "coordinateSpace": "window screenshot coordinates; normalized x/y/w/h in [0,1]",
+    "sourceSize": {
+      "width": 235,
+      "height": 173
+    },
+    "scaleFactors": [
+      1,
+      2,
+      4
+    ],
+    "scaleArtifacts": [
+      {
+        "scale": 1,
+        "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1b-role-3488404011-scale-1x.jpg",
+        "width": 235,
+        "height": 173,
+        "bytes": 16771
+      },
+      {
+        "scale": 2,
+        "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1b-role-3488404011-scale-2x.jpg",
+        "width": 470,
+        "height": 346,
+        "bytes": 40212
+      },
+      {
+        "scale": 4,
+        "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1b-role-3488404011-scale-4x.jpg",
+        "width": 940,
+        "height": 692,
+        "bytes": 110875
+      }
+    ],
+    "dpiMetadata": "unavailable",
+    "scaleNote": "1x/2x/4x are synthetic resamples of the captured frame; no DPI metadata was exposed."
+  },
+  "ocr": {
+    "engine": "tesseract.js",
+    "status": "BLOCKED_OFFLINE",
+    "attemptedInput": "p3.1b-role-3488404011-capture.jpg",
+    "text": "",
+    "confidence": null,
+    "error": "fetch failed while loading unavailable core/language data; network access is unavailable",
+    "scaleStatus": "not_run_after_engine_failure"
+  },
+  "templateMatching": {
+    "status": "VISUAL_CONSISTENCY_ONLY",
+    "referenceTemplate": "same-frame candidate patches",
+    "semanticTemplateAvailable": false,
+    "note": "No labeled Vận chuyển reference template was available; cross-scale patch similarity does not prove control semantics.",
+    "results": [
+      {
+        "rank": 1,
+        "bbox": {
+          "x": 147,
+          "y": 34,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.625531914893617,
+          "y": 0.19653179190751446,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.3907407407407407,
+        "crossScaleCentroidConsistency": 0.7907987867911525,
+        "templateSimilarity": {
+          "2x": 0.935842814492052,
+          "4x": 0.911845396594852
+        }
+      },
+      {
+        "rank": 2,
+        "bbox": {
+          "x": 195,
+          "y": 34,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.8297872340425532,
+          "y": 0.19653179190751446,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.3626543209876543,
+        "crossScaleCentroidConsistency": 0.8262635852402371,
+        "templateSimilarity": {
+          "2x": 0.9366537561526669,
+          "4x": 0.9114580811748567
+        }
+      },
+      {
+        "rank": 3,
+        "bbox": {
+          "x": 213,
+          "y": 52,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.9063829787234042,
+          "y": 0.30057803468208094,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.34629629629629627,
+        "crossScaleCentroidConsistency": 0.8617021276595751,
+        "templateSimilarity": {
+          "2x": 0.9471919632050351,
+          "4x": 0.9272452190752845
+        }
+      },
+      {
+        "rank": 4,
+        "bbox": {
+          "x": 165,
+          "y": 34,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.7021276595744681,
+          "y": 0.19653179190751446,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.3419753086419753,
+        "crossScaleCentroidConsistency": 0.7846673842973898,
+        "templateSimilarity": {
+          "2x": 0.9546316468974421,
+          "4x": 0.9373799725651577
+        }
+      },
+      {
+        "rank": 5,
+        "bbox": {
+          "x": 204,
+          "y": 73,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.8680851063829788,
+          "y": 0.42196531791907516,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.33271604938271604,
+        "crossScaleCentroidConsistency": 0.8829787234042543,
+        "templateSimilarity": {
+          "2x": 0.94520697167756,
+          "4x": 0.9242596627128218
+        }
+      },
+      {
+        "rank": 6,
+        "bbox": {
+          "x": 213,
+          "y": 34,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.9063829787234042,
+          "y": 0.19653179190751446,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.24969135802469133,
+        "crossScaleCentroidConsistency": 0.9893617021276593,
+        "templateSimilarity": {
+          "2x": 0.950645525699992,
+          "4x": 0.9323368030339708
+        }
+      },
+      {
+        "rank": 7,
+        "bbox": {
+          "x": 129,
+          "y": 34,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.548936170212766,
+          "y": 0.19653179190751446,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.20339506172839505,
+        "crossScaleCentroidConsistency": 0.3282937238328292,
+        "templateSimilarity": {
+          "2x": 0.9521383038812232,
+          "4x": 0.9335713709352054
+        }
+      },
+      {
+        "rank": 8,
+        "bbox": {
+          "x": 180,
+          "y": 43,
+          "w": 18,
+          "h": 18
+        },
+        "normalized": {
+          "x": 0.7659574468085106,
+          "y": 0.24855491329479767,
+          "w": 0.07659574468085106,
+          "h": 0.10404624277456648
+        },
+        "featureScore": 0.1765432098765432,
+        "crossScaleCentroidConsistency": 0.7846673842973905,
+        "templateSimilarity": {
+          "2x": 0.958875978374889,
+          "4x": 0.9427943193738401
+        }
+      }
+    ]
+  },
+  "featureMatching": {
+    "method": "colorfulness+edge-density candidate detection with normalized-centroid cross-scale matching",
+    "roi": "x>=55%W,y=18..76%H",
+    "results": [
+      {
+        "scale": 1,
+        "width": 235,
+        "height": 173,
+        "candidates": [
+          {
+            "x": 147,
+            "y": 34,
+            "w": 18,
+            "h": 18,
+            "score": 0.3907407407407407,
+            "nx": 0.625531914893617,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 195,
+            "y": 34,
+            "w": 18,
+            "h": 18,
+            "score": 0.3626543209876543,
+            "nx": 0.8297872340425532,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 213,
+            "y": 52,
+            "w": 18,
+            "h": 18,
+            "score": 0.34629629629629627,
+            "nx": 0.9063829787234042,
+            "ny": 0.30057803468208094,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 165,
+            "y": 34,
+            "w": 18,
+            "h": 18,
+            "score": 0.3419753086419753,
+            "nx": 0.7021276595744681,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 204,
+            "y": 73,
+            "w": 18,
+            "h": 18,
+            "score": 0.33271604938271604,
+            "nx": 0.8680851063829788,
+            "ny": 0.42196531791907516,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 213,
+            "y": 34,
+            "w": 18,
+            "h": 18,
+            "score": 0.24969135802469133,
+            "nx": 0.9063829787234042,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 129,
+            "y": 34,
+            "w": 18,
+            "h": 18,
+            "score": 0.20339506172839505,
+            "nx": 0.548936170212766,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 180,
+            "y": 43,
+            "w": 18,
+            "h": 18,
+            "score": 0.1765432098765432,
+            "nx": 0.7659574468085106,
+            "ny": 0.24855491329479767,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          }
+        ]
+      },
+      {
+        "scale": 2,
+        "width": 470,
+        "height": 346,
+        "candidates": [
+          {
+            "x": 288,
+            "y": 68,
+            "w": 36,
+            "h": 36,
+            "score": 0.3407407407407408,
+            "nx": 0.6127659574468085,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 390,
+            "y": 68,
+            "w": 36,
+            "h": 36,
+            "score": 0.31759259259259254,
+            "nx": 0.8297872340425532,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 432,
+            "y": 104,
+            "w": 36,
+            "h": 36,
+            "score": 0.2972222222222222,
+            "nx": 0.9191489361702128,
+            "ny": 0.30057803468208094,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 324,
+            "y": 62,
+            "w": 36,
+            "h": 36,
+            "score": 0.28086419753086417,
+            "nx": 0.6893617021276596,
+            "ny": 0.1791907514450867,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 408,
+            "y": 146,
+            "w": 36,
+            "h": 36,
+            "score": 0.26944444444444443,
+            "nx": 0.8680851063829788,
+            "ny": 0.42196531791907516,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 354,
+            "y": 80,
+            "w": 36,
+            "h": 36,
+            "score": 0.21790123456790123,
+            "nx": 0.7531914893617021,
+            "ny": 0.23121387283236994,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 426,
+            "y": 68,
+            "w": 36,
+            "h": 36,
+            "score": 0.2080246913580247,
+            "nx": 0.9063829787234042,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 396,
+            "y": 104,
+            "w": 36,
+            "h": 36,
+            "score": 0.18487654320987654,
+            "nx": 0.8425531914893617,
+            "ny": 0.30057803468208094,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          }
+        ]
+      },
+      {
+        "scale": 4,
+        "width": 940,
+        "height": 692,
+        "candidates": [
+          {
+            "x": 577,
+            "y": 124,
+            "w": 72,
+            "h": 72,
+            "score": 0.2882716049382716,
+            "nx": 0.6138297872340426,
+            "ny": 0.1791907514450867,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 781,
+            "y": 124,
+            "w": 72,
+            "h": 72,
+            "score": 0.2882716049382716,
+            "nx": 0.8308510638297872,
+            "ny": 0.1791907514450867,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 865,
+            "y": 208,
+            "w": 72,
+            "h": 72,
+            "score": 0.27314814814814814,
+            "nx": 0.9202127659574468,
+            "ny": 0.30057803468208094,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 649,
+            "y": 124,
+            "w": 72,
+            "h": 72,
+            "score": 0.25709876543209875,
+            "nx": 0.6904255319148936,
+            "ny": 0.1791907514450867,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 805,
+            "y": 292,
+            "w": 72,
+            "h": 72,
+            "score": 0.22932098765432096,
+            "nx": 0.8563829787234043,
+            "ny": 0.42196531791907516,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 853,
+            "y": 136,
+            "w": 72,
+            "h": 72,
+            "score": 0.1845679012345679,
+            "nx": 0.9074468085106383,
+            "ny": 0.19653179190751446,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 709,
+            "y": 160,
+            "w": 72,
+            "h": 72,
+            "score": 0.1787037037037037,
+            "nx": 0.7542553191489362,
+            "ny": 0.23121387283236994,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          },
+          {
+            "x": 793,
+            "y": 208,
+            "w": 72,
+            "h": 72,
+            "score": 0.16141975308641976,
+            "nx": 0.8436170212765958,
+            "ny": 0.30057803468208094,
+            "nw": 0.07659574468085106,
+            "nh": 0.10404624277456648
+          }
+        ]
+      }
+    ]
+  },
+  "transportCandidate": {
+    "candidateId": "C5",
+    "frameBbox": {
+      "x": 204,
+      "y": 73,
+      "w": 18,
+      "h": 18
+    },
+    "normalizedBbox": {
+      "x": 0.8680851063829788,
+      "y": 0.42196531791907516,
+      "w": 0.07659574468085106,
+      "h": 0.10404624277456648
+    },
+    "scaleBboxes": {
+      "1x": {
+        "x": 204,
+        "y": 73,
+        "w": 18,
+        "h": 18
+      },
+      "2x": {
+        "x": 408,
+        "y": 146,
+        "w": 36,
+        "h": 36
+      },
+      "4x": {
+        "x": 805,
+        "y": 292,
+        "w": 72,
+        "h": 72
+      }
+    },
+    "featureScore": 0.33271604938271604,
+    "crossScaleCentroidConsistency": 0.8829787234042543,
+    "templateSimilarity": {
+      "2x": 0.94520697167756,
+      "4x": 0.9242596627128218
+    },
+    "visualCue": "blue emblem below the right-side toolbar",
+    "semanticConfidence": 0.35,
+    "status": "UNCONFIRMED_CANDIDATE",
+    "clickEligible": false,
+    "reason": "Stable visual patch across three synthetic scales, but no OCR/semantic label and no verified transport template."
+  },
+  "teamViewer": {
+    "windowReturned": true,
+    "status": "MINIMIZED",
+    "used": false
+  },
+  "action": {
+    "clickCount": 0,
+    "inputSent": 0,
+    "windowActivated": false,
+    "panelsOpened": 0
+  }
+}

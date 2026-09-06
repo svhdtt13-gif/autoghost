@@ -1,0 +1,175 @@
+name: PLAN V1 CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet-plan-v1:
+    name: .NET PLAN V1 (P0-P3)
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Verify C# PLAN V1 source is present
+        shell: pwsh
+        run: |
+          $requiredPaths = @(
+            'AutoGhost.sln',
+            'src/AutoGhost.P0Probe/AutoGhost.P0Probe.csproj',
+            'src/AutoGhost.App/AutoGhost.App.csproj',
+            'src/AutoGhost.ActionModel/AutoGhost.ActionModel.csproj',
+            'src/AutoGhost.TaskEngine/AutoGhost.TaskEngine.csproj',
+            'tests/AutoGhost.P0Probe.Tests/AutoGhost.P0Probe.Tests.csproj',
+            'tests/AutoGhost.App.Tests/AutoGhost.App.Tests.csproj',
+            'tests/AutoGhost.ActionModel.Tests/AutoGhost.ActionModel.Tests.csproj',
+            'tests/AutoGhost.TaskEngine.Tests/AutoGhost.TaskEngine.Tests.csproj',
+            'src/AutoGhost.TaskEngine/TransportNotes.cs'
+          )
+          foreach ($requiredPath in $requiredPaths) {
+            if (-not (Test-Path -LiteralPath $requiredPath)) { throw "Missing PLAN V1 source path: $requiredPath" }
+          }
+          Write-Host "C# PLAN V1 source manifest present: $($requiredPaths.Count) required paths."
+
+      - name: Restore .NET solution
+        run: dotnet restore AutoGhost.sln
+
+      - name: Build .NET Release
+        run: dotnet build AutoGhost.sln --configuration Release --no-restore
+
+      - name: Run P0 tests
+        run: dotnet run --project tests/AutoGhost.P0Probe.Tests/AutoGhost.P0Probe.Tests.csproj --configuration Release --no-build
+
+      - name: Run P1 tests
+        run: dotnet run --project tests/AutoGhost.App.Tests/AutoGhost.App.Tests.csproj --configuration Release --no-build
+
+      - name: Run P2 tests
+        run: dotnet run --project tests/AutoGhost.ActionModel.Tests/AutoGhost.ActionModel.Tests.csproj --configuration Release --no-build
+
+      - name: Run P3 Foundation and Canonical tests
+        run: dotnet run --project tests/AutoGhost.TaskEngine.Tests/AutoGhost.TaskEngine.Tests.csproj --configuration Release --no-build
+
+      - name: Run safety invariant tests
+        shell: pwsh
+        run: |
+          dotnet run --project tests/AutoGhost.P0Probe.Tests/AutoGhost.P0Probe.Tests.csproj --configuration Release --no-build
+          dotnet run --project tests/AutoGhost.ActionModel.Tests/AutoGhost.ActionModel.Tests.csproj --configuration Release --no-build
+          dotnet run --project tests/AutoGhost.TaskEngine.Tests/AutoGhost.TaskEngine.Tests.csproj --configuration Release --no-build
+
+      - name: Validate config and JSON contracts
+        shell: pwsh
+        run: |
+          $jsonPaths = @(git ls-files '*.json')
+          $parsedCount = 0
+          foreach ($jsonPath in $jsonPaths) {
+            $null = Get-Content -LiteralPath $jsonPath -Raw | ConvertFrom-Json
+            $parsedCount++
+          }
+          $config = Get-Content -LiteralPath p0.config.sample.json -Raw | ConvertFrom-Json
+          if ($config.processName -ne 'qnyh') { throw 'p0.config.sample.json processName contract failed.' }
+          if ([string]::IsNullOrWhiteSpace([string]$config.roleIdRegex)) { throw 'p0.config.sample.json roleIdRegex contract failed.' }
+          if ($null -eq $config.clients) { throw 'p0.config.sample.json clients contract failed.' }
+          Write-Host "Validated $parsedCount JSON files and p0.config.sample.json shape. No standalone JSON schema is claimed yet."
+
+      - name: Scan tracked files for secrets, cache, and build output
+        shell: pwsh
+        run: |
+          $trackedFiles = @(git ls-files)
+          $forbiddenFiles = @($trackedFiles | Where-Object {
+            $_ -match '(^|/)(bin|obj|\.vs|\.pytest_cache|build|dist)(/|$)' -or
+            $_ -match '(^|/).*\.(obj|exe|dll|pdb)$'
+          })
+          if ($forbiddenFiles.Count -gt 0) {
+            throw ("Tracked build/cache output found:`n" + ($forbiddenFiles -join "`n"))
+          }
+          $secretPatterns = @(
+            ('ghp' + '_'),
+            ('github' + '_pat' + '_'),
+            'sk-[A-Za-z0-9]{20,}',
+            'AKIA[0-9A-Z]{16}',
+            '-----BEGIN[[:space:]][A-Z[:space:]]+PRIVATE KEY-----'
+          )
+          $secretMatches = @()
+          foreach ($secretPattern in $secretPatterns) {
+            $patternMatches = @(& git grep -n -I -E -e $secretPattern -- .)
+            if ($LASTEXITCODE -gt 1) { throw "Secret scan failed for pattern $secretPattern." }
+            if ($LASTEXITCODE -eq 0) { $secretMatches += $patternMatches }
+          }
+          if ($secretMatches.Count -gt 0) {
+            throw ("High-confidence secret pattern found:`n" + ($secretMatches -join "`n"))
+          }
+          $global:LASTEXITCODE = 0
+          Write-Host "Tracked-file scope scan passed: no build output/cache or high-confidence secret pattern."
+
+  python-legacy:
+    name: Python legacy regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install legacy test package
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[test,vision]"
+
+      - name: Compile legacy source and tests
+        run: python -m compileall -q src tests
+
+      - name: Run legacy regression
+        run: python -m pytest -q --junitxml="test-results-${{ matrix.python-version }}.xml"
+
+      - name: Upload legacy test report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: test-results-${{ matrix.python-version }}.xml
+
+  python-package-build:
+    name: Python legacy package build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build wheel and source distribution
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --sdist --wheel --outdir dist
+
+      - name: Verify built wheel imports
+        run: |
+          python -m pip install --no-deps --target verify-install dist/*.whl
+          PYTHONPATH=verify-install python -c "import qnyh_tool; print(qnyh_tool.__name__)"

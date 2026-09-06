@@ -1,0 +1,223 @@
+{
+  "probe": "P3.1C Semantic Confirmation",
+  "timestampUtc": "2026-09-06T12:40:29.768Z",
+  "status": "SEMANTIC_UNCONFIRMED_NO_CLICK",
+  "target": {
+    "roleId": "3488404011",
+    "windowId": 10885552,
+    "app": "process:C:\\Ghost Story\\qnyh.exe",
+    "title": "Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]",
+    "returnedCandidateCount": 1
+  },
+  "capture": {
+    "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-capture.jpg",
+    "width": 235,
+    "height": 173,
+    "originX": 381,
+    "originY": 116,
+    "zIndex": 0,
+    "accessibilityTree": "Window: \"Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011]\", App: qnyh.exe.\n\t0 window Ghost Story Engine [3.739133] Version [3.739133] Server [S1 - Yixiao Naihe] Role [3488404011] Secondary Actions: Raise\n\t\t1 title bar\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close"
+  },
+  "ocr": {
+    "engine": "Windows.Media.Ocr",
+    "mode": "local_offline",
+    "languages": {
+      "en-US": "AVAILABLE",
+      "vi-VN": "NOT_INSTALLED",
+      "zh-CN": "NOT_INSTALLED",
+      "zh-TW": "NOT_INSTALLED"
+    },
+    "fullFrame": {
+      "1x": "Nost Story Engine",
+      "2x": "ost Story Engine [3....",
+      "4x": "host Story Engine [3"
+    },
+    "c5Vicinity": "",
+    "rightToolbar": "",
+    "c5Tight": "",
+    "semanticTextFound": false,
+    "notes": "OCR recovered locally; en-US only recognizes the native title bar. C5 and nearby toolbar text produced no text."
+  },
+  "normalization": {
+    "coordinateSpace": "window screenshot coordinates; normalized values in [0,1]",
+    "sourceSize": {
+      "width": 235,
+      "height": 173
+    },
+    "scaleFactors": [
+      1,
+      2,
+      4
+    ],
+    "scaleArtifacts": [
+      {
+        "scale": 1,
+        "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-scale-1x.jpg",
+        "width": 235,
+        "height": 173,
+        "bytes": 17188
+      },
+      {
+        "scale": 2,
+        "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-scale-2x.jpg",
+        "width": 470,
+        "height": 346,
+        "bytes": 41196
+      },
+      {
+        "scale": 4,
+        "path": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-scale-4x.jpg",
+        "width": 940,
+        "height": 692,
+        "bytes": 113537
+      }
+    ],
+    "dpiMetadata": "unavailable",
+    "scaleNote": "Synthetic resampling only; no native DPI metadata exposed."
+  },
+  "c5": {
+    "candidateId": "C5",
+    "bbox": {
+      "x": 206,
+      "y": 75,
+      "w": 14,
+      "h": 14
+    },
+    "normalizedBbox": {
+      "x": 0.8765957446808511,
+      "y": 0.43352601156069365,
+      "w": 0.059574468085106386,
+      "h": 0.08092485549132948
+    },
+    "scaleBboxes": {
+      "1x": {
+        "x": 206,
+        "y": 75,
+        "w": 14,
+        "h": 14
+      },
+      "2x": {
+        "x": 412,
+        "y": 151,
+        "w": 28,
+        "h": 27
+      },
+      "4x": {
+        "x": 824,
+        "y": 302,
+        "w": 56,
+        "h": 55
+      }
+    },
+    "neighborBlueComponents": {
+      "1x": [
+        {
+          "x": 169,
+          "y": 75,
+          "w": 11,
+          "h": 33
+        },
+        {
+          "x": 206,
+          "y": 75,
+          "w": 14,
+          "h": 14
+        },
+        {
+          "x": 189,
+          "y": 75,
+          "w": 15,
+          "h": 14
+        }
+      ],
+      "2x": [
+        {
+          "x": 412,
+          "y": 151,
+          "w": 28,
+          "h": 27
+        },
+        {
+          "x": 338,
+          "y": 150,
+          "w": 22,
+          "h": 65
+        },
+        {
+          "x": 378,
+          "y": 150,
+          "w": 29,
+          "h": 28
+        }
+      ],
+      "4x": [
+        {
+          "x": 824,
+          "y": 302,
+          "w": 56,
+          "h": 55
+        },
+        {
+          "x": 676,
+          "y": 301,
+          "w": 44,
+          "h": 129
+        },
+        {
+          "x": 756,
+          "y": 300,
+          "w": 57,
+          "h": 56
+        }
+      ]
+    },
+    "templateSimilarity": {
+      "2x": 0.9296385220754969,
+      "4x": 0.9011271175136721
+    },
+    "temporalSimilarityToP31B": 0.9523542750433507,
+    "crossScaleGeometryStable": true,
+    "visualCue": "blue emblem below the right-side toolbar",
+    "semanticConfidence": 0.35,
+    "status": "UNCONFIRMED_CANDIDATE",
+    "clickEligible": false
+  },
+  "evidenceImages": {
+    "annotatedC5": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-c5-annotated-4x.jpg",
+    "c5Vicinity": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-c5-vicinity.jpg",
+    "rightToolbar": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-right-toolbar.jpg",
+    "c5Tight": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1c-role-3488404011-c5-tight.jpg"
+  },
+  "teamViewer": {
+    "present": true,
+    "status": "not_captured",
+    "error": "window is minimized; call activate_window, refresh with get_window, then retry get_window_state",
+    "used": false
+  },
+  "guards": {
+    "currentRoleMatch": true,
+    "currentForegroundApi": "not_exposed",
+    "currentKillSwitchApi": "not_exposed",
+    "historicalContextArtifact": {
+      "source": "C:\\Users\\Admin\\Documents\\ChatGPT\\GHOST\\artifacts\\p3.1-ui-evidence-2026-09-06.json",
+      "processId": 45120,
+      "windowHandle": "0xA619B0",
+      "desktopName": "Default",
+      "isForeground": false,
+      "killSwitchActive": false,
+      "note": "Historical only; not used as current click authorization."
+    }
+  },
+  "decision": {
+    "semanticConfirmation": false,
+    "clickConsidered": false,
+    "clickEligible": false,
+    "reason": "OCR has no C5 semantics, zh/vi local packs are absent, and current foreground/Kill Switch state is not exposed by the native surface. No supervised exploratory click performed."
+  },
+  "action": {
+    "clickCount": 0,
+    "inputSent": 0,
+    "windowActivated": false,
+    "restrictedActionsAttempted": []
+  }
+}

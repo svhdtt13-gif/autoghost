@@ -1,0 +1,22 @@
+{
+  "client": "role-3488404011",
+  "roleId": "3488404011",
+  "capturedAt": "2026-09-06",
+  "task": "Nhiệm vụ vận chuyển",
+  "timeWindow": "00:00-23:00 daily",
+  "state": "received; item list observed",
+  "items": [
+    {"name": "Trân Châu", "quantity": 2},
+    {"name": "Hồng Hoa Hoàn", "quantity": 20},
+    {"name": "Xích Thước Hoàn", "quantity": 20},
+    {"name": "Bánh Củ Hoàng", "quantity": 20},
+    {"name": "Đào Hoa Thạch", "quantity": 1},
+    {"name": "Lăng Tiêu Hoàn", "quantity": 20},
+    {"name": "Canh Ngũ Sắc", "quantity": 20},
+    {"name": "Gà Hoa Tuyết", "quantity": 5}
+  ],
+  "specialItem": null,
+  "specialItemComparison": "PENDING_USER_SPECIAL_ITEM_LIST",
+  "specialItemNote": "No special-item list exists yet. User will provide it in the app after V1 is completed; do not infer an alert from this run.",
+  "actionPolicy": "No purchase, no item insertion/submission, no quest turn-in."
+}

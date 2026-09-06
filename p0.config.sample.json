@@ -1,0 +1,10 @@
+{
+  "processName": "qnyh",
+  "roleIdRegex": "^qnyh\\s*\\|\\s*(?<roleId>[A-Z0-9_-]+)$",
+  "clients": [
+    {
+      "clientId": "REPLACE_WITH_CLIENT_ID",
+      "enabled": false
+    }
+  ]
+}

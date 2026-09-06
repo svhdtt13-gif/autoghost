@@ -10,3 +10,11 @@ qnyh-tool.local.json
 logs/
 screenshots/
 checkpoints/
+
+# .NET/WPF build output and local native probes
+**/bin/
+**/obj/
+.vs/
+native/*.exe
+*.obj
+artifacts/*.log

@@ -16,7 +16,8 @@ Implemented:
 Verification:
 
 - Release build: PASS, 0 warnings, 0 errors;
-- P3 task engine + scheduler tests: PASS (5/5);
+- P3 task engine + scheduler tests: PASS (8/8), including transport-note,
+  Special Items, and multi-client acceptance cases;
 - existing ActionModel tests: PASS (4/4);
 - existing P0 smoke tests: PASS (6/6);
 - existing P1 registry tests: PASS.
@@ -57,4 +58,7 @@ The three remaining gates were reviewed and accepted in Issue #1:
 
 The current real Special Items list is intentionally not provided, so live comparison remains `PENDING_USER_SPECIAL_ITEM_LIST` until the user configures it in the app. The canonical runtime remains `SAFE_STOP` after item capture.
 
-Review boundary: this commit publishes the approved P3/P3.1 evidence and review package. The implementation/artifact files referenced in the official review were workspace-local before publication and are not claimed as source-audited from the GitHub default branch. P4+ remains unauthorized.
+Review boundary: the C# implementation source is now published in PR #2 and
+the artifact files are the evidence package recorded in Issue #1. Real qnyh
+navigation/capture remains local supervised acceptance; it is not replaced by
+GitHub CI. P4+ remains unauthorized.

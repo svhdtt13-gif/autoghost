@@ -1,4 +1,21 @@
-# Qnyh UI Automation Tool
+# AutoGhost V1 / Qnyh UI Automation Tool
+
+## PLAN V1 source of truth
+
+The accepted PLAN V1 implementation is the C#/.NET 8 solution in
+`AutoGhost.sln`. Its completed P0-P3 source and console test projects are
+under `src/AutoGhost.*` and `tests/AutoGhost.*`. The Windows-only qnyh probe,
+WPF shell, action model, and task/transport-note engine are built and tested by
+`.github/workflows/ci.yml`.
+
+The Python/PySide6 package under `src/qnyh_tool` is retained as a legacy
+compatibility package and is tested separately. It is not the implementation
+used to claim the C# PLAN V1 P0-P3 acceptance.
+
+The GitHub CI does not replace local qnyh acceptance: native window binding,
+foreground/HWND checks, physical input, screen capture, and supervised game UI
+verification remain Windows-local evidence. P4 and later phases remain
+unauthorized.
 
 Windows-first desktop tool for observing and, only after explicit confirmation,
 automating selected `qnyh.exe` clients through visible UI interactions.

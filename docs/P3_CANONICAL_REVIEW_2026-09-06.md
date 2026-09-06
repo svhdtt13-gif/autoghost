@@ -75,4 +75,4 @@ Please review:
 
 P3 Canonical Vận chuyển was officially accepted as `FINAL PASS` in Issue #1 comment `#5559678616`. The remaining gates passed: exact `RoleId + LocalDate` note/history persistence, per-client Special Items comparison with `PendingUserList / Match / NoMatch`, and isolation between Roles `3488404011` and `16711204011` with leakage `false`.
 
-The real user-provided Special Items list is still absent by design; no live client-specific alert is inferred until the user supplies it. This commit publishes the approved P3/P3.1 evidence package. Source implementation is not claimed as audited from the GitHub default branch; P4+ remains unauthorized.
+The real user-provided Special Items list is still absent by design; no live client-specific alert is inferred until the user supplies it. This commit publishes the approved P3/P3.1 evidence package and the C# source audit package. The real navigation/capture remains supervised evidence, not unattended live automation; P4+ remains unauthorized.

@@ -1,0 +1,71 @@
+name: PLAN V1 CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    name: Regression (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install test package
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[test]"
+
+      - name: Compile source and tests
+        run: python -m compileall -q src tests
+
+      - name: Run full PLAN V1 regression
+        run: python -m pytest -q --junitxml="test-results-${{ matrix.python-version }}.xml"
+
+      - name: Upload test report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: test-results-${{ matrix.python-version }}.xml
+
+  package-build:
+    name: Package build (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build wheel and source distribution
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --sdist --wheel --outdir dist
+
+      - name: Verify built wheel imports
+        run: |
+          python -m pip install --no-deps --target verify-install dist/*.whl
+          PYTHONPATH=verify-install python -c "import qnyh_tool; print(qnyh_tool.__name__)"

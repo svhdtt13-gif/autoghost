@@ -29,10 +29,13 @@ Current state for both gates: `PENDING_LIVE_OBSERVATION`.
 
 Each gate evidence record carries the exact `ClientId`, `RoleId`, and HWND it
 was observed against. The live interaction guard rejects evidence from another
-client, role, or HWND. It additionally requires the exact target in the
-foreground, Kill Switch off, and automation explicitly armed. The success
-counter uses an atomic read-check-increment-write operation under the history
-file lock, so concurrent callbacks cannot exceed the daily limit.
+client, role, or HWND. Before any feature-specific input, the shared global
+guard also requires the exact target in the foreground, Kill Switch off,
+automation explicitly armed, `GLOBAL_NORMALIZE` complete, verified `HANG_ZHOU`,
+and verified `MAIN_WORLD_VIEW`. Read-only process/window inspection and frame
+capture remain allowed before normalization. The success counter uses an
+atomic read-check-increment-write operation under the history file lock, so
+concurrent callbacks cannot exceed the daily limit.
 
 No qnyh click or registration input is part of this commit.
 

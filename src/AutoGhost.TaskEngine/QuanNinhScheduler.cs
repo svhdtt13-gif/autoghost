@@ -567,7 +567,20 @@ public sealed record QuanNinhLiveTarget(
     nint WindowHandle,
     bool IsForeground,
     bool KillSwitchActive,
-    bool AutomationArmed);
+    bool AutomationArmed,
+    AutoGhostMainFrameState MainFrameState = AutoGhostMainFrameState.Unknown,
+    AutoGhostHangZhouState HangZhouState = AutoGhostHangZhouState.Unknown,
+    AutoGhostMainWorldViewState MainWorldViewState = AutoGhostMainWorldViewState.Unknown)
+    : AutoGhostInteractionTarget(
+        ClientId,
+        RoleId,
+        WindowHandle,
+        IsForeground,
+        KillSwitchActive,
+        AutomationArmed,
+        MainFrameState,
+        HangZhouState,
+        MainWorldViewState);
 
 /// <summary>
 /// Input remains fail-closed until identity, HWND, foreground, Kill Switch,
@@ -582,34 +595,7 @@ public static class QuanNinhLiveInteractionGuard
     {
         ArgumentNullException.ThrowIfNull(target);
 
-        if (string.IsNullOrWhiteSpace(target.ClientId) ||
-            string.IsNullOrWhiteSpace(target.RoleId) ||
-            !string.Equals(target.ClientId, target.RoleId, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException(
-                "Quan Ninh input requires an exact registered Client ID and Role ID match.");
-        }
-
-        if (target.WindowHandle == nint.Zero)
-        {
-            throw new InvalidOperationException("Quan Ninh input requires a non-zero bound HWND.");
-        }
-
-        if (!target.IsForeground)
-        {
-            throw new InvalidOperationException("Quan Ninh input requires the exact bound HWND to be foreground.");
-        }
-
-        if (target.KillSwitchActive)
-        {
-            throw new InvalidOperationException("Kill Switch is active; Quan Ninh input is blocked.");
-        }
-
-        if (!target.AutomationArmed)
-        {
-            throw new InvalidOperationException("Automation is not armed; Quan Ninh input is blocked.");
-        }
-
+        AutoGhostGlobalInteractionGuard.RequireActiveInteractionReady(target, "Quan Ninh");
         QuanNinhLiveGateGuard.RequireVerified(target, slotRecognition, registrationConfirmation);
     }
 }

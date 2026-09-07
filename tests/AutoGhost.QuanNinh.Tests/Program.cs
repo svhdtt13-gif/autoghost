@@ -13,10 +13,12 @@ internal static class Program
             ("window_boundaries_are_end_exclusive", TestWindowBoundariesAreEndExclusive),
             ("allowed_days_are_monday_wednesday_friday_sunday", TestAllowedDays),
             ("quota_counts_verified_success_only", TestQuotaCountsVerifiedSuccessOnly),
+            ("quota_increment_is_atomic_under_concurrency", TestQuotaIncrementIsAtomicUnderConcurrency),
             ("quota_persists_across_restart_and_isolates_clients", TestQuotaPersistenceAndIsolation),
             ("local_date_key_uses_vietnam_timezone", TestLocalDateKeyUsesVietnamTimezone),
             ("live_gates_fail_closed_until_verified", TestLiveGatesFailClosedUntilVerified),
-            ("input_guard_requires_identity_foreground_and_gates", TestInputGuard)
+            ("input_guard_requires_identity_foreground_and_gates", TestInputGuard),
+            ("live_evidence_cannot_cross_client_or_hwnd", TestLiveEvidenceBinding)
         };
 
         try
@@ -196,6 +198,44 @@ internal static class Program
         }
     }
 
+    private static void TestQuotaIncrementIsAtomicUnderConcurrency()
+    {
+        var path = CreateTempPath();
+        try
+        {
+            var successfulRegistrations = 0;
+            Parallel.For(0, 24, _ =>
+            {
+                var service = new QuanNinhSchedulerService(
+                    new JsonQuanNinhRegistrationHistoryStore(path));
+                try
+                {
+                    service.RecordVerifiedSuccess("client-a", MondayLunchUtc);
+                    Interlocked.Increment(ref successfulRegistrations);
+                }
+                catch (InvalidOperationException)
+                {
+                    // The atomic store operation rejects callbacks after the daily quota.
+                }
+            });
+
+            var reloaded = new QuanNinhSchedulerService(
+                new JsonQuanNinhRegistrationHistoryStore(path));
+            var decision = reloaded.Evaluate("client-a", MondayLunchUtc);
+
+            Assert(successfulRegistrations == 3,
+                "Concurrent verified callbacks did not admit exactly three registrations.");
+            Assert(decision.SuccessfulRegistrationsToday == 3,
+                "Concurrent verified callbacks persisted an incorrect success count.");
+            Assert(decision.Status == QuanNinhEligibilityStatus.DailySuccessLimitReached,
+                "Concurrent verified callbacks did not close the daily quota.");
+        }
+        finally
+        {
+            DeleteTempPath(path);
+        }
+    }
+
     private static void TestLocalDateKeyUsesVietnamTimezone()
     {
         var path = CreateTempPath();
@@ -224,17 +264,30 @@ internal static class Program
     {
         var pending = new QuanNinhLiveGateEvidence(
             QuanNinhLiveGateGuard.SlotRecognitionGate,
+            "client-a",
+            "client-a",
+            new nint(0x1234),
             QuanNinhLiveGateState.PendingLiveObservation,
             null,
             "qnyh live observation is pending");
         var verified = new QuanNinhLiveGateEvidence(
             QuanNinhLiveGateGuard.RegistrationConfirmationGate,
+            "client-a",
+            "client-a",
+            new nint(0x1234),
             QuanNinhLiveGateState.Verified,
             "live-evidence-placeholder",
             "qnyh success state was visibly confirmed");
+        var target = new QuanNinhLiveTarget(
+            ClientId: "client-a",
+            RoleId: "client-a",
+            WindowHandle: new nint(0x1234),
+            IsForeground: true,
+            KillSwitchActive: false,
+            AutomationArmed: true);
 
         AssertThrows<InvalidOperationException>(
-            () => QuanNinhLiveGateGuard.RequireVerified(pending, verified),
+            () => QuanNinhLiveGateGuard.RequireVerified(target, pending, verified),
             "A pending Q-QN gate did not fail closed.");
 
         var verifiedSlot = pending with
@@ -243,18 +296,24 @@ internal static class Program
             EvidencePath = "live-evidence-placeholder",
             Reason = "qnyh slot was visibly confirmed"
         };
-        QuanNinhLiveGateGuard.RequireVerified(verifiedSlot, verified);
+        QuanNinhLiveGateGuard.RequireVerified(target, verifiedSlot, verified);
     }
 
     private static void TestInputGuard()
     {
         var verifiedSlot = new QuanNinhLiveGateEvidence(
             QuanNinhLiveGateGuard.SlotRecognitionGate,
+            "client-a",
+            "client-a",
+            new nint(0x1234),
             QuanNinhLiveGateState.Verified,
             "live-evidence-placeholder",
             "qnyh slot was visibly confirmed");
         var verifiedRegistration = new QuanNinhLiveGateEvidence(
             QuanNinhLiveGateGuard.RegistrationConfirmationGate,
+            "client-a",
+            "client-a",
+            new nint(0x1234),
             QuanNinhLiveGateState.Verified,
             "live-evidence-placeholder",
             "qnyh success state was visibly confirmed");
@@ -289,6 +348,46 @@ internal static class Program
                 verifiedSlot,
                 verifiedRegistration),
             "Kill Switch did not block Quan Ninh input.");
+    }
+
+    private static void TestLiveEvidenceBinding()
+    {
+        var target = new QuanNinhLiveTarget(
+            ClientId: "client-a",
+            RoleId: "client-a",
+            WindowHandle: new nint(0x1234),
+            IsForeground: true,
+            KillSwitchActive: false,
+            AutomationArmed: true);
+        var slotEvidence = new QuanNinhLiveGateEvidence(
+            QuanNinhLiveGateGuard.SlotRecognitionGate,
+            "client-a",
+            "client-a",
+            new nint(0x1234),
+            QuanNinhLiveGateState.Verified,
+            "live-evidence-placeholder",
+            "qnyh slot was visibly confirmed");
+        var registrationEvidence = new QuanNinhLiveGateEvidence(
+            QuanNinhLiveGateGuard.RegistrationConfirmationGate,
+            "client-a",
+            "client-a",
+            new nint(0x1234),
+            QuanNinhLiveGateState.Verified,
+            "live-evidence-placeholder",
+            "qnyh success state was visibly confirmed");
+
+        AssertThrows<InvalidOperationException>(
+            () => QuanNinhLiveInteractionGuard.RequireReady(
+                target with { ClientId = "client-b", RoleId = "client-b" },
+                slotEvidence,
+                registrationEvidence),
+            "Evidence for client-a authorized client-b.");
+        AssertThrows<InvalidOperationException>(
+            () => QuanNinhLiveInteractionGuard.RequireReady(
+                target with { WindowHandle = new nint(0x5678) },
+                slotEvidence,
+                registrationEvidence),
+            "Evidence for HWND 0x1234 authorized a different HWND.");
     }
 
     private static string CreateTempPath()

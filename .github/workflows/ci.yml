@@ -121,7 +121,7 @@ jobs:
           $global:LASTEXITCODE = 0
           Write-Host "Tracked-file scope scan passed: no build output/cache or high-confidence secret pattern."
 
-      - name: Scan P0-P3 evidence for auth/session data
+      - name: Scan tracked evidence for auth/session data
         shell: pwsh
         run: |
           $evidencePaths = @(git ls-files 'artifacts/*')

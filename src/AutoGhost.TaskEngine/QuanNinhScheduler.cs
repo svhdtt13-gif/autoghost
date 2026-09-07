@@ -162,6 +162,12 @@ public interface IQuanNinhRegistrationHistoryStore
     QuanNinhRegistrationRecord? Load(string clientId, DateOnly localDate);
 
     void Save(QuanNinhRegistrationRecord record);
+
+    bool TryRecordVerifiedSuccess(
+        string clientId,
+        DateOnly localDate,
+        int maxSuccessfulRegistrationsPerClientPerDay,
+        out QuanNinhRegistrationRecord? updatedRecord);
 }
 
 /// <summary>
@@ -178,8 +184,6 @@ public sealed class JsonQuanNinhRegistrationHistoryStore : IQuanNinhRegistration
         Converters = { new JsonStringEnumConverter() }
     };
 
-    private readonly object _sync = new();
-
     public JsonQuanNinhRegistrationHistoryStore(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
@@ -188,22 +192,21 @@ public sealed class JsonQuanNinhRegistrationHistoryStore : IQuanNinhRegistration
         }
 
         FilePath = Path.GetFullPath(filePath);
+        _sync = FileLocks.GetOrAdd(FilePath, static _ => new object());
     }
 
     public string FilePath { get; }
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, object> FileLocks = new(
+        StringComparer.OrdinalIgnoreCase);
+
+    private readonly object _sync;
 
     public IReadOnlyList<QuanNinhRegistrationRecord> LoadAll()
     {
         lock (_sync)
         {
-            if (!File.Exists(FilePath))
-            {
-                return Array.Empty<QuanNinhRegistrationRecord>();
-            }
-
-            var json = File.ReadAllText(FilePath);
-            return JsonSerializer.Deserialize<List<QuanNinhRegistrationRecord>>(json, JsonOptions)
-                   ?? new List<QuanNinhRegistrationRecord>();
+            return LoadAllUnsafe();
         }
     }
 
@@ -226,32 +229,101 @@ public sealed class JsonQuanNinhRegistrationHistoryStore : IQuanNinhRegistration
 
         lock (_sync)
         {
-            var records = LoadAll()
+            var records = LoadAllUnsafe()
                 .Where(existing => !HasSameKey(existing, record))
                 .Append(record)
                 .OrderBy(existing => existing.LocalDate)
                 .ThenBy(existing => existing.ClientId, StringComparer.Ordinal)
                 .ToList();
 
-            var directory = Path.GetDirectoryName(FilePath);
-            if (!string.IsNullOrWhiteSpace(directory))
+            WriteAllUnsafe(records);
+        }
+    }
+
+    /// <summary>
+    /// Atomically performs the read-check-increment-write sequence under the
+    /// file lock shared by all store instances for the same path.
+    /// </summary>
+    public bool TryRecordVerifiedSuccess(
+        string clientId,
+        DateOnly localDate,
+        int maxSuccessfulRegistrationsPerClientPerDay,
+        out QuanNinhRegistrationRecord? updatedRecord)
+    {
+        if (string.IsNullOrWhiteSpace(clientId))
+        {
+            throw new ArgumentException("Client ID is required.", nameof(clientId));
+        }
+
+        if (maxSuccessfulRegistrationsPerClientPerDay <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maxSuccessfulRegistrationsPerClientPerDay),
+                "The daily successful-registration limit must be positive.");
+        }
+
+        var normalizedClientId = clientId.Trim();
+        lock (_sync)
+        {
+            var records = LoadAllUnsafe();
+            var existing = records.FirstOrDefault(record =>
+                string.Equals(record.ClientId, normalizedClientId, StringComparison.Ordinal) &&
+                record.LocalDate == localDate);
+            var currentCount = existing?.SuccessfulRegistrations ?? 0;
+            if (currentCount >= maxSuccessfulRegistrationsPerClientPerDay)
             {
-                Directory.CreateDirectory(directory);
+                updatedRecord = null;
+                return false;
             }
 
-            var temporaryPath = $"{FilePath}.{Guid.NewGuid():N}.tmp";
-            try
+            var newRecord = new QuanNinhRegistrationRecord(
+                normalizedClientId,
+                localDate,
+                currentCount + 1);
+            updatedRecord = newRecord;
+            var updatedRecords = records
+                .Where(record => !HasSameKey(record, newRecord))
+                .Append(newRecord)
+                .OrderBy(record => record.LocalDate)
+                .ThenBy(record => record.ClientId, StringComparer.Ordinal)
+                .ToList();
+            WriteAllUnsafe(updatedRecords);
+            return true;
+        }
+    }
+
+    private List<QuanNinhRegistrationRecord> LoadAllUnsafe()
+    {
+        if (!File.Exists(FilePath))
+        {
+            return new List<QuanNinhRegistrationRecord>();
+        }
+
+        var json = File.ReadAllText(FilePath);
+        return JsonSerializer.Deserialize<List<QuanNinhRegistrationRecord>>(json, JsonOptions)
+               ?? new List<QuanNinhRegistrationRecord>();
+    }
+
+    private void WriteAllUnsafe(IReadOnlyList<QuanNinhRegistrationRecord> records)
+    {
+        var directory = Path.GetDirectoryName(FilePath);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        var temporaryPath = $"{FilePath}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            var json = JsonSerializer.Serialize(records, JsonOptions);
+            File.WriteAllText(temporaryPath, json);
+            File.Move(temporaryPath, FilePath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath))
             {
-                var json = JsonSerializer.Serialize(records, JsonOptions);
-                File.WriteAllText(temporaryPath, json);
-                File.Move(temporaryPath, FilePath, overwrite: true);
-            }
-            finally
-            {
-                if (File.Exists(temporaryPath))
-                {
-                    File.Delete(temporaryPath);
-                }
+                File.Delete(temporaryPath);
             }
         }
     }
@@ -386,20 +458,17 @@ public sealed class QuanNinhSchedulerService
         var normalizedClientId = clientId.Trim();
         var localNow = TimeZoneInfo.ConvertTime(verifiedAtUtc.ToUniversalTime(), _timeZone);
         var localDate = DateOnly.FromDateTime(localNow.DateTime);
-        var existing = _historyStore.Load(normalizedClientId, localDate);
-        var currentCount = existing?.SuccessfulRegistrations ?? 0;
-        if (currentCount >= _policy.MaxSuccessfulRegistrationsPerClientPerDay)
+        if (!_historyStore.TryRecordVerifiedSuccess(
+                normalizedClientId,
+                localDate,
+                _policy.MaxSuccessfulRegistrationsPerClientPerDay,
+                out var updated))
         {
             throw new InvalidOperationException(
                 "The daily successful-registration limit has already been reached.");
         }
 
-        var updated = new QuanNinhRegistrationRecord(
-            normalizedClientId,
-            localDate,
-            currentCount + 1);
-        _historyStore.Save(updated);
-        return updated;
+        return updated!;
     }
 
     private static QuanNinhEligibilityDecision Decision(
@@ -434,11 +503,19 @@ public enum QuanNinhLiveGateState
 /// </summary>
 public sealed record QuanNinhLiveGateEvidence(
     string GateId,
+    string ClientId,
+    string RoleId,
+    nint WindowHandle,
     QuanNinhLiveGateState State,
     string? EvidencePath,
     string Reason)
 {
     public bool IsVerified => State == QuanNinhLiveGateState.Verified;
+
+    public bool IsBoundTo(QuanNinhLiveTarget target) =>
+        string.Equals(ClientId, target.ClientId, StringComparison.Ordinal) &&
+        string.Equals(RoleId, target.RoleId, StringComparison.Ordinal) &&
+        WindowHandle == target.WindowHandle;
 }
 
 public static class QuanNinhLiveGateGuard
@@ -447,11 +524,28 @@ public static class QuanNinhLiveGateGuard
     public const string RegistrationConfirmationGate = "Q-QN-002";
 
     public static void RequireVerified(
+        QuanNinhLiveTarget target,
         QuanNinhLiveGateEvidence slotRecognition,
         QuanNinhLiveGateEvidence registrationConfirmation)
     {
+        ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(slotRecognition);
         ArgumentNullException.ThrowIfNull(registrationConfirmation);
+
+        if (string.IsNullOrWhiteSpace(target.ClientId) ||
+            string.IsNullOrWhiteSpace(target.RoleId) ||
+            !string.Equals(target.ClientId, target.RoleId, StringComparison.Ordinal) ||
+            target.WindowHandle == nint.Zero)
+        {
+            throw new InvalidOperationException(
+                "Quan Ninh live evidence requires an exact Client ID/Role ID and non-zero HWND target.");
+        }
+
+        if (!slotRecognition.IsBoundTo(target) || !registrationConfirmation.IsBoundTo(target))
+        {
+            throw new InvalidOperationException(
+                "Quan Ninh live evidence is bound to a different Client ID, Role ID, or HWND.");
+        }
 
         if (!string.Equals(slotRecognition.GateId, SlotRecognitionGate, StringComparison.Ordinal) ||
             !string.Equals(registrationConfirmation.GateId, RegistrationConfirmationGate, StringComparison.Ordinal))
@@ -516,6 +610,6 @@ public static class QuanNinhLiveInteractionGuard
             throw new InvalidOperationException("Automation is not armed; Quan Ninh input is blocked.");
         }
 
-        QuanNinhLiveGateGuard.RequireVerified(slotRecognition, registrationConfirmation);
+        QuanNinhLiveGateGuard.RequireVerified(target, slotRecognition, registrationConfirmation);
     }
 }

@@ -194,6 +194,15 @@ internal static class Program
                 $"Lowercase key '{pair.Value}' did not resolve to {pair.Key}.");
         }
 
+        Assert(AutoGhostMapHotkeyMap.Canonical.Count == 1 &&
+               AutoGhostMapHotkeyMap.GetKey(AutoGhostMapAction.ToggleMap) == 'M',
+            "Map keyboard mapping must contain only the M toggle.");
+        Assert(!AutoGhostMapHotkeyMap.TryResolve('e', out _),
+            "E must not resolve as a map keyboard action.");
+        Assert(AutoGhostMapVisualControlPolicy.RequiresVerifiedClick(
+                   AutoGhostMapVisualControl.WorldMapLayerSelector),
+            "World-map layer switching must require a verified visual click.");
+
         var panelPlan = AutoGhostGlobalNormalize.Build(new AutoGhostObservedUiState(
             TargetBindingVerified: true,
             Surface: AutoGhostObservedUiSurface.Panel,

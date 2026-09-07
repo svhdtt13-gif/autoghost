@@ -59,6 +59,55 @@ public static class AutoGhostHotkeyMap
     }
 }
 
+/// <summary>
+/// Map keyboard controls. World-map layer switching is intentionally not a
+/// keyboard action; it requires a verified visual control click instead.
+/// </summary>
+public enum AutoGhostMapAction
+{
+    ToggleMap
+}
+
+public static class AutoGhostMapHotkeyMap
+{
+    private static readonly IReadOnlyDictionary<AutoGhostMapAction, char> CanonicalMap =
+        new ReadOnlyDictionary<AutoGhostMapAction, char>(new Dictionary<AutoGhostMapAction, char>
+        {
+            [AutoGhostMapAction.ToggleMap] = 'M'
+        });
+
+    public static IReadOnlyDictionary<AutoGhostMapAction, char> Canonical => CanonicalMap;
+
+    public static char GetKey(AutoGhostMapAction action) => CanonicalMap[action];
+
+    public static bool TryResolve(char key, out AutoGhostMapAction action)
+    {
+        var normalized = char.ToUpperInvariant(key);
+        foreach (var pair in CanonicalMap)
+        {
+            if (pair.Value == normalized)
+            {
+                action = pair.Key;
+                return true;
+            }
+        }
+
+        action = default;
+        return false;
+    }
+}
+
+public enum AutoGhostMapVisualControl
+{
+    WorldMapLayerSelector
+}
+
+public static class AutoGhostMapVisualControlPolicy
+{
+    public static bool RequiresVerifiedClick(AutoGhostMapVisualControl control) =>
+        control == AutoGhostMapVisualControl.WorldMapLayerSelector;
+}
+
 public enum AutoGhostObservedUiSurface
 {
     Unknown,

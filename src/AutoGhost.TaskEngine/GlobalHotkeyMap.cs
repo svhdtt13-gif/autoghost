@@ -60,13 +60,12 @@ public static class AutoGhostHotkeyMap
 }
 
 /// <summary>
-/// Map-only controls. E changes the map layer while the map is already open;
-/// it is not a standalone panel and requires a verified map surface.
+/// Map keyboard controls. World-map layer switching is intentionally not a
+/// keyboard action; it requires a verified visual control click instead.
 /// </summary>
 public enum AutoGhostMapAction
 {
-    ToggleMap,
-    SwitchWorldMap
+    ToggleMap
 }
 
 public static class AutoGhostMapHotkeyMap
@@ -74,8 +73,7 @@ public static class AutoGhostMapHotkeyMap
     private static readonly IReadOnlyDictionary<AutoGhostMapAction, char> CanonicalMap =
         new ReadOnlyDictionary<AutoGhostMapAction, char>(new Dictionary<AutoGhostMapAction, char>
         {
-            [AutoGhostMapAction.ToggleMap] = 'M',
-            [AutoGhostMapAction.SwitchWorldMap] = 'E'
+            [AutoGhostMapAction.ToggleMap] = 'M'
         });
 
     public static IReadOnlyDictionary<AutoGhostMapAction, char> Canonical => CanonicalMap;
@@ -97,6 +95,17 @@ public static class AutoGhostMapHotkeyMap
         action = default;
         return false;
     }
+}
+
+public enum AutoGhostMapVisualControl
+{
+    WorldMapLayerSelector
+}
+
+public static class AutoGhostMapVisualControlPolicy
+{
+    public static bool RequiresVerifiedClick(AutoGhostMapVisualControl control) =>
+        control == AutoGhostMapVisualControl.WorldMapLayerSelector;
 }
 
 public enum AutoGhostObservedUiSurface

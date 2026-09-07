@@ -16,6 +16,18 @@ The qnyh panel toggles are canonical for every AutoGhost feature:
 | `Y` | Chợ / Tiệm cá nhân |
 | `T` | Party |
 
+Map-only controls:
+
+| Key | Action |
+| --- | --- |
+| `M` | Toggle Bản đồ |
+| `E` | Switch bản đồ thế giới/layer |
+
+`E` is valid only after a fresh observation has verified that the exact bound
+qnyh client is currently showing Bản đồ. It must be followed by a fresh
+capture and map-layer verification; it is never a standalone navigation or
+travel key.
+
 These keys are toggles, not a normalization macro. A live executor must:
 
 1. bind and verify the exact target;

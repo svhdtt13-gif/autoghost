@@ -59,6 +59,46 @@ public static class AutoGhostHotkeyMap
     }
 }
 
+/// <summary>
+/// Map-only controls. E changes the map layer while the map is already open;
+/// it is not a standalone panel and requires a verified map surface.
+/// </summary>
+public enum AutoGhostMapAction
+{
+    ToggleMap,
+    SwitchWorldMap
+}
+
+public static class AutoGhostMapHotkeyMap
+{
+    private static readonly IReadOnlyDictionary<AutoGhostMapAction, char> CanonicalMap =
+        new ReadOnlyDictionary<AutoGhostMapAction, char>(new Dictionary<AutoGhostMapAction, char>
+        {
+            [AutoGhostMapAction.ToggleMap] = 'M',
+            [AutoGhostMapAction.SwitchWorldMap] = 'E'
+        });
+
+    public static IReadOnlyDictionary<AutoGhostMapAction, char> Canonical => CanonicalMap;
+
+    public static char GetKey(AutoGhostMapAction action) => CanonicalMap[action];
+
+    public static bool TryResolve(char key, out AutoGhostMapAction action)
+    {
+        var normalized = char.ToUpperInvariant(key);
+        foreach (var pair in CanonicalMap)
+        {
+            if (pair.Value == normalized)
+            {
+                action = pair.Key;
+                return true;
+            }
+        }
+
+        action = default;
+        return false;
+    }
+}
+
 public enum AutoGhostObservedUiSurface
 {
     Unknown,

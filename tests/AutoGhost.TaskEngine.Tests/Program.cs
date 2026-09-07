@@ -11,6 +11,7 @@ internal static class Program
             ("live_and_kill_switch_guards", TestLiveAndKillSwitchGuardsAsync),
             ("retry_from_start", TestRetryFromStartAsync),
             ("task_timeout", TestTaskTimeoutAsync),
+            ("dec043_canonical_hotkeys_and_observed_normalize", TestCanonicalHotkeysAndObservedNormalizeAsync),
             ("transport_note_persists_by_role_and_date", TestTransportNotePersistsByRoleAndDateAsync),
             ("special_items_match_and_no_match_from_configuration", TestSpecialItemsMatchAndNoMatchAsync),
             ("multi_client_acceptance_isolates_notes_and_alerts", TestMultiClientAcceptanceIsolationAsync)
@@ -163,6 +164,94 @@ internal static class Program
 
         Assert(result.State == TaskRunState.TimedOut, "Task timeout was not recorded.");
         return;
+    }
+
+    private static Task TestCanonicalHotkeysAndObservedNormalizeAsync()
+    {
+        var expected = new Dictionary<AutoGhostPanel, char>
+        {
+            [AutoGhostPanel.Map] = 'M',
+            [AutoGhostPanel.Bag] = 'B',
+            [AutoGhostPanel.Chat] = 'X',
+            [AutoGhostPanel.Activity] = 'H',
+            [AutoGhostPanel.Skill] = 'K',
+            [AutoGhostPanel.TaskStatus] = 'L',
+            [AutoGhostPanel.Benefits] = 'I',
+            [AutoGhostPanel.Market] = 'Y',
+            [AutoGhostPanel.Party] = 'T'
+        };
+
+        Assert(AutoGhostHotkeyMap.Canonical.Count == expected.Count,
+            "Canonical hotkey map does not contain exactly the DEC-043 panels.");
+        Assert(expected.All(pair => AutoGhostHotkeyMap.GetKey(pair.Key) == pair.Value),
+            "Canonical hotkey map contains a wrong panel key.");
+        Assert(expected.Values.Distinct().Count() == expected.Count,
+            "Canonical hotkey map contains duplicate toggle keys.");
+        foreach (var pair in expected)
+        {
+            Assert(AutoGhostHotkeyMap.TryResolve(char.ToLowerInvariant(pair.Value), out var panel) &&
+                   panel == pair.Key,
+                $"Lowercase key '{pair.Value}' did not resolve to {pair.Key}.");
+        }
+
+        var panelPlan = AutoGhostGlobalNormalize.Build(new AutoGhostObservedUiState(
+            TargetBindingVerified: true,
+            Surface: AutoGhostObservedUiSurface.Panel,
+            OpenPanel: AutoGhostPanel.Activity,
+            MainFrameVerified: false,
+            HangZhouVerified: false,
+            MainWorldVerified: false));
+        Assert(panelPlan[0].Kind == AutoGhostNormalizeStepKind.CloseObservedPanel &&
+               panelPlan[0].Panel == AutoGhostPanel.Activity &&
+               panelPlan[0].Hotkey == 'H',
+            "Observed Activity panel did not produce the single H close toggle.");
+        Assert(panelPlan.Count(step => step.Kind == AutoGhostNormalizeStepKind.CloseObservedPanel) == 1,
+            "Normalization planned more than one toggle close.");
+        Assert(panelPlan.Skip(1).Select(step => step.Kind).SequenceEqual(new[]
+        {
+            AutoGhostNormalizeStepKind.VerifyMainFrame,
+            AutoGhostNormalizeStepKind.VerifyHangZhou,
+            AutoGhostNormalizeStepKind.VerifyMainWorld
+        }),
+            "Normalization did not require the global verification sequence.");
+
+        var toggleAlwaysRequiresReverification = AutoGhostGlobalNormalize.Build(new AutoGhostObservedUiState(
+            TargetBindingVerified: true,
+            Surface: AutoGhostObservedUiSurface.Panel,
+            OpenPanel: AutoGhostPanel.Bag,
+            MainFrameVerified: true,
+            HangZhouVerified: true,
+            MainWorldVerified: true));
+        Assert(toggleAlwaysRequiresReverification.Select(step => step.Kind).SequenceEqual(new[]
+        {
+            AutoGhostNormalizeStepKind.CloseObservedPanel,
+            AutoGhostNormalizeStepKind.VerifyMainFrame,
+            AutoGhostNormalizeStepKind.VerifyHangZhou,
+            AutoGhostNormalizeStepKind.VerifyMainWorld
+        }) && toggleAlwaysRequiresReverification[0].Hotkey == 'B',
+            "A panel toggle did not force post-toggle global verification.");
+
+        var alreadyNormalized = AutoGhostGlobalNormalize.Build(new AutoGhostObservedUiState(
+            TargetBindingVerified: true,
+            Surface: AutoGhostObservedUiSurface.MainWorld,
+            OpenPanel: null,
+            MainFrameVerified: true,
+            HangZhouVerified: true,
+            MainWorldVerified: true));
+        Assert(alreadyNormalized.Count == 0,
+            "A verified Hàng Châu main-world frame should not receive toggle input.");
+
+        var unknown = AutoGhostGlobalNormalize.Build(new AutoGhostObservedUiState(
+            TargetBindingVerified: true,
+            Surface: AutoGhostObservedUiSurface.Unknown,
+            OpenPanel: null,
+            MainFrameVerified: false,
+            HangZhouVerified: false,
+            MainWorldVerified: false));
+        Assert(unknown.Count == 1 && unknown[0].Kind == AutoGhostNormalizeStepKind.SafeStop,
+            "Unknown UI state did not fail closed.");
+
+        return Task.CompletedTask;
     }
 
     private static Task TestTransportNotePersistsByRoleAndDateAsync()

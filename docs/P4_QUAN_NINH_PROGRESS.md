@@ -37,6 +37,13 @@ capture remain allowed before normalization. The success counter uses an
 atomic read-check-increment-write operation under the history file lock, so
 concurrent callbacks cannot exceed the daily limit.
 
+DEC-043 defines the global qnyh panel toggles in
+`docs/DEC-043_GLOBAL_HOTKEY_MAP.md` and
+`src/AutoGhost.TaskEngine/GlobalHotkeyMap.cs`. Normalization may close only a
+panel identified in the current observation, using that panel's one canonical
+toggle key, and must then re-verify the main frame, Hàng Châu, and main-world
+view. It must not press all panel keys or infer a travel key.
+
 No qnyh click or registration input is part of this commit.
 
 ## Verification

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   dotnet-plan-v1:
-    name: .NET PLAN V1 (P0-P3)
+    name: .NET PLAN V1 (P0-P4)
     runs-on: windows-latest
     timeout-minutes: 20
 
@@ -37,6 +37,8 @@ jobs:
             'tests/AutoGhost.App.Tests/AutoGhost.App.Tests.csproj',
             'tests/AutoGhost.ActionModel.Tests/AutoGhost.ActionModel.Tests.csproj',
             'tests/AutoGhost.TaskEngine.Tests/AutoGhost.TaskEngine.Tests.csproj',
+            'tests/AutoGhost.QuanNinh.Tests/AutoGhost.QuanNinh.Tests.csproj',
+            'src/AutoGhost.TaskEngine/QuanNinhScheduler.cs',
             'src/AutoGhost.TaskEngine/TransportNotes.cs'
           )
           foreach ($requiredPath in $requiredPaths) {
@@ -61,6 +63,9 @@ jobs:
 
       - name: Run P3 Foundation and Canonical tests
         run: dotnet run --project tests/AutoGhost.TaskEngine.Tests/AutoGhost.TaskEngine.Tests.csproj --configuration Release --no-build
+
+      - name: Run P4 Quan Ninh scheduler tests
+        run: dotnet run --project tests/AutoGhost.QuanNinh.Tests/AutoGhost.QuanNinh.Tests.csproj --configuration Release --no-build
 
       - name: Run safety invariant tests
         shell: pwsh
@@ -116,7 +121,7 @@ jobs:
           $global:LASTEXITCODE = 0
           Write-Host "Tracked-file scope scan passed: no build output/cache or high-confidence secret pattern."
 
-      - name: Scan P0-P3 evidence for auth/session data
+      - name: Scan tracked evidence for auth/session data
         shell: pwsh
         run: |
           $evidencePaths = @(git ls-files 'artifacts/*')

@@ -3573,7 +3573,7 @@
     {
       "windowHandle": "0x1C08B0",
       "desktopName": "Default",
-      "title": "https://socket.abf-services-aws.com/socket-entry?id_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhdXRoMHw2NDA1YmYyZTdkZDVmNjcxODUyODQxNDkiLCJuYW1lIjoiZGF0ZGF0ZHVjIiwibmlja25hbWUiOiJkYXRkYXRkdWMiLCJlbWFpbCI6ImRhdGRhdGR1Y0BnbWFpbC5jb20iLCJwaWN0dXJlIjoiIiwiaWF0IjoxNzc4Mzk2ODU4fQ.eXcRKb8ynixKYGkxCs5rZLTdq7zKiEBBY4CikY4PP5o\u0026su_version=23.1\u0026t=1788615256529",
+      "title": "[REDACTED_AUTH_URL]",
       "className": "Qt5155QWindowToolSaveBits",
       "isVisible": false,
       "isEnabled": true,
@@ -3807,7 +3807,7 @@
     {
       "windowHandle": "0x9091A",
       "desktopName": "Default",
-      "title": "https://socket.abf-services-aws.com/socket-entry?id_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhdXRoMHw2NDA1YmYyZTdkZDVmNjcxODUyODQxNDkiLCJuYW1lIjoiZGF0ZGF0ZHVjIiwibmlja25hbWUiOiJkYXRkYXRkdWMiLCJlbWFpbCI6ImRhdGRhdGR1Y0BnbWFpbC5jb20iLCJwaWN0dXJlIjoiIiwiaWF0IjoxNzc4Mzk2ODU4fQ.eXcRKb8ynixKYGkxCs5rZLTdq7zKiEBBY4CikY4PP5o\u0026su_version=23.1\u0026t=1788532714904",
+      "title": "[REDACTED_AUTH_URL]",
       "className": "Qt5155QWindowToolSaveBits",
       "isVisible": false,
       "isEnabled": true,

@@ -100,7 +100,9 @@ jobs:
             ('github' + '_pat' + '_'),
             'sk-[A-Za-z0-9]{20,}',
             'AKIA[0-9A-Z]{16}',
-            '-----BEGIN[[:space:]][A-Z[:space:]]+PRIVATE KEY-----'
+            '-----BEGIN[[:space:]][A-Z[:space:]]+PRIVATE KEY-----',
+            'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}',
+            'https?://[^[:space:]" ]+(id_token|access_token|refresh_token|session|cookie|authorization|bearer)=[^[:space:]" ]+'
           )
           $secretMatches = @()
           foreach ($secretPattern in $secretPatterns) {
@@ -113,6 +115,49 @@ jobs:
           }
           $global:LASTEXITCODE = 0
           Write-Host "Tracked-file scope scan passed: no build output/cache or high-confidence secret pattern."
+
+      - name: Scan P0-P3 evidence for auth/session data
+        shell: pwsh
+        run: |
+          $evidencePaths = @(git ls-files 'artifacts/*')
+          $evidencePatterns = [ordered]@{
+            idToken = ('id' + '_token\s*[=:]\s*[^\s"]+')
+            accessToken = ('access' + '_token\s*[=:]\s*[^\s"]+')
+            refreshToken = ('refresh' + '_token\s*[=:]\s*[^\s"]+')
+            sessionCredential = 'session[\s_-]*[=:]\s*[A-Za-z0-9._-]{20,}'
+            cookieCredential = 'cookie[\s_-]*[=:]\s*[A-Za-z0-9._=;-]{20,}'
+            bearerCredential = 'authorization\s*[:=]\s*Bearer\s+[A-Za-z0-9._-]{20,}'
+            authUrl = 'https?://[^\s"]+(id_token|access_token|refresh_token|session|cookie|authorization|bearer)=[^\s"]+'
+            jwt = 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
+          }
+          $positiveFixtures = [ordered]@{
+            idToken = (('id' + '_token') + '=fixture-id-token-value')
+            accessToken = (('access' + '_token') + ':fixture-access-token-value')
+            refreshToken = (('refresh' + '_token') + ' = fixture-refresh-token-value')
+            sessionCredential = 'session=SESSION_FIXTURE_1234567890'
+            cookieCredential = 'cookie:COOKIE_FIXTURE_1234567890'
+            bearerCredential = 'Authorization: Bearer BEARER_FIXTURE_1234567890'
+            authUrl = ('https://fixture.invalid/socket?' + ('id' + '_token') + '=fixture-url-token')
+            jwt = ('eyJ' + 'fixtureheader123.' + 'eyJ' + 'fixturepayload123.signaturefixture123')
+          }
+          foreach ($fixture in $positiveFixtures.GetEnumerator()) {
+            if (-not [regex]::IsMatch($fixture.Value, $evidencePatterns[$fixture.Key], [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+              throw "Positive scanner fixture did not match: $($fixture.Key)."
+            }
+          }
+          Write-Host "Positive scanner fixtures passed: $($positiveFixtures.Count) credential patterns matched."
+          $hits = @()
+          foreach ($evidencePath in $evidencePaths) {
+            $content = Get-Content -LiteralPath $evidencePath -Raw
+            foreach ($entry in $evidencePatterns.GetEnumerator()) {
+              $count = [regex]::Matches($content, $entry.Value, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase).Count
+              if ($count -gt 0) { $hits += ($evidencePath + ' [' + $entry.Key + '=' + $count + ']') }
+            }
+          }
+          if ($hits.Count -gt 0) {
+            throw ("Sensitive auth/session data found in tracked evidence:`n" + ($hits -join "`n"))
+          }
+          Write-Host "Tracked P0-P3 evidence scan passed: no id/access/refresh token, session/cookie credential, bearer credential, auth URL, or JWT."
 
   python-legacy:
     name: Python legacy regression

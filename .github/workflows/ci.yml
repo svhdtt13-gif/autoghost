@@ -121,15 +121,31 @@ jobs:
         run: |
           $evidencePaths = @(git ls-files 'artifacts/*')
           $evidencePatterns = [ordered]@{
-            idToken = ('id' + '_token[[:space:]]*[=:][[:space:]]*[^[:space:]" ]+')
-            accessToken = ('access' + '_token[[:space:]]*[=:][[:space:]]*[^[:space:]" ]+')
-            refreshToken = ('refresh' + '_token[[:space:]]*[=:][[:space:]]*[^[:space:]" ]+')
-            sessionCredential = 'session[[:space:]_-]*[=:][[:space:]]*[A-Za-z0-9._-]{20,}'
-            cookieCredential = 'cookie[[:space:]_-]*[=:][[:space:]]*[A-Za-z0-9._=;-]{20,}'
-            bearerCredential = 'authorization[[:space:]]*[:=][[:space:]]*Bearer[[:space:]]+[A-Za-z0-9._-]{20,}'
-            authUrl = 'https?://[^[:space:]" ]+(id_token|access_token|refresh_token|session|cookie|authorization|bearer)=[^[:space:]" ]+'
+            idToken = ('id' + '_token\s*[=:]\s*[^\s"]+')
+            accessToken = ('access' + '_token\s*[=:]\s*[^\s"]+')
+            refreshToken = ('refresh' + '_token\s*[=:]\s*[^\s"]+')
+            sessionCredential = 'session[\s_-]*[=:]\s*[A-Za-z0-9._-]{20,}'
+            cookieCredential = 'cookie[\s_-]*[=:]\s*[A-Za-z0-9._=;-]{20,}'
+            bearerCredential = 'authorization\s*[:=]\s*Bearer\s+[A-Za-z0-9._-]{20,}'
+            authUrl = 'https?://[^\s"]+(id_token|access_token|refresh_token|session|cookie|authorization|bearer)=[^\s"]+'
             jwt = 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
           }
+          $positiveFixtures = [ordered]@{
+            idToken = 'id_token=fixture-id-token-value'
+            accessToken = 'access_token:fixture-access-token-value'
+            refreshToken = 'refresh_token = fixture-refresh-token-value'
+            sessionCredential = 'session=SESSION_FIXTURE_1234567890'
+            cookieCredential = 'cookie:COOKIE_FIXTURE_1234567890'
+            bearerCredential = 'Authorization: Bearer BEARER_FIXTURE_1234567890'
+            authUrl = 'https://fixture.invalid/socket?id_token=fixture-url-token'
+            jwt = 'eyJfixtureheader123.eyJfixturepayload123.signaturefixture123'
+          }
+          foreach ($fixture in $positiveFixtures.GetEnumerator()) {
+            if (-not [regex]::IsMatch($fixture.Value, $evidencePatterns[$fixture.Key], [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+              throw "Positive scanner fixture did not match: $($fixture.Key)."
+            }
+          }
+          Write-Host "Positive scanner fixtures passed: $($positiveFixtures.Count) credential patterns matched."
           $hits = @()
           foreach ($evidencePath in $evidencePaths) {
             $content = Get-Content -LiteralPath $evidencePath -Raw

@@ -131,14 +131,14 @@ jobs:
             jwt = 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
           }
           $positiveFixtures = [ordered]@{
-            idToken = 'id_token=fixture-id-token-value'
-            accessToken = 'access_token:fixture-access-token-value'
-            refreshToken = 'refresh_token = fixture-refresh-token-value'
+            idToken = (('id' + '_token') + '=fixture-id-token-value')
+            accessToken = (('access' + '_token') + ':fixture-access-token-value')
+            refreshToken = (('refresh' + '_token') + ' = fixture-refresh-token-value')
             sessionCredential = 'session=SESSION_FIXTURE_1234567890'
             cookieCredential = 'cookie:COOKIE_FIXTURE_1234567890'
             bearerCredential = 'Authorization: Bearer BEARER_FIXTURE_1234567890'
-            authUrl = 'https://fixture.invalid/socket?id_token=fixture-url-token'
-            jwt = 'eyJfixtureheader123.eyJfixturepayload123.signaturefixture123'
+            authUrl = ('https://fixture.invalid/socket?' + ('id' + '_token') + '=fixture-url-token')
+            jwt = ('eyJ' + 'fixtureheader123.' + 'eyJ' + 'fixturepayload123.signaturefixture123')
           }
           foreach ($fixture in $positiveFixtures.GetEnumerator()) {
             if (-not [regex]::IsMatch($fixture.Value, $evidencePatterns[$fixture.Key], [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {

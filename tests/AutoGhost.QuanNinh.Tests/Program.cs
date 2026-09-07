@@ -18,7 +18,8 @@ internal static class Program
             ("local_date_key_uses_vietnam_timezone", TestLocalDateKeyUsesVietnamTimezone),
             ("live_gates_fail_closed_until_verified", TestLiveGatesFailClosedUntilVerified),
             ("input_guard_requires_identity_foreground_and_gates", TestInputGuard),
-            ("live_evidence_cannot_cross_client_or_hwnd", TestLiveEvidenceBinding)
+            ("live_evidence_cannot_cross_client_or_hwnd", TestLiveEvidenceBinding),
+            ("global_interaction_guard_requires_main_frame_location_and_view", TestGlobalInteractionGuard)
         };
 
         try
@@ -284,7 +285,10 @@ internal static class Program
             WindowHandle: new nint(0x1234),
             IsForeground: true,
             KillSwitchActive: false,
-            AutomationArmed: true);
+            AutomationArmed: true,
+            MainFrameState: AutoGhostMainFrameState.Normalized,
+            HangZhouState: AutoGhostHangZhouState.Verified,
+            MainWorldViewState: AutoGhostMainWorldViewState.Verified);
 
         AssertThrows<InvalidOperationException>(
             () => QuanNinhLiveGateGuard.RequireVerified(target, pending, verified),
@@ -323,7 +327,10 @@ internal static class Program
             WindowHandle: new nint(0x1234),
             IsForeground: true,
             KillSwitchActive: false,
-            AutomationArmed: true);
+            AutomationArmed: true,
+            MainFrameState: AutoGhostMainFrameState.Normalized,
+            HangZhouState: AutoGhostHangZhouState.Verified,
+            MainWorldViewState: AutoGhostMainWorldViewState.Verified);
 
         QuanNinhLiveInteractionGuard.RequireReady(
             target,
@@ -358,7 +365,10 @@ internal static class Program
             WindowHandle: new nint(0x1234),
             IsForeground: true,
             KillSwitchActive: false,
-            AutomationArmed: true);
+            AutomationArmed: true,
+            MainFrameState: AutoGhostMainFrameState.Normalized,
+            HangZhouState: AutoGhostHangZhouState.Verified,
+            MainWorldViewState: AutoGhostMainWorldViewState.Verified);
         var slotEvidence = new QuanNinhLiveGateEvidence(
             QuanNinhLiveGateGuard.SlotRecognitionGate,
             "client-a",
@@ -388,6 +398,44 @@ internal static class Program
                 slotEvidence,
                 registrationEvidence),
             "Evidence for HWND 0x1234 authorized a different HWND.");
+    }
+
+    private static void TestGlobalInteractionGuard()
+    {
+        var target = new AutoGhostInteractionTarget(
+            ClientId: "client-a",
+            RoleId: "client-a",
+            WindowHandle: new nint(0x1234),
+            IsForeground: true,
+            KillSwitchActive: false,
+            AutomationArmed: true);
+
+        AssertThrows<InvalidOperationException>(
+            () => AutoGhostGlobalInteractionGuard.RequireActiveInteractionReady(target, "TestFeature"),
+            "An unnormalized target was allowed to enter a feature flow.");
+        AssertThrows<InvalidOperationException>(
+            () => AutoGhostGlobalInteractionGuard.RequireActiveInteractionReady(
+                target with { MainFrameState = AutoGhostMainFrameState.Normalized },
+                "TestFeature"),
+            "A target without verified Hang Zhou state was allowed to enter a feature flow.");
+        AssertThrows<InvalidOperationException>(
+            () => AutoGhostGlobalInteractionGuard.RequireActiveInteractionReady(
+                target with
+                {
+                    MainFrameState = AutoGhostMainFrameState.Normalized,
+                    HangZhouState = AutoGhostHangZhouState.Verified
+                },
+                "TestFeature"),
+            "A target without verified main-world view was allowed to enter a feature flow.");
+
+        AutoGhostGlobalInteractionGuard.RequireActiveInteractionReady(
+            target with
+            {
+                MainFrameState = AutoGhostMainFrameState.Normalized,
+                HangZhouState = AutoGhostHangZhouState.Verified,
+                MainWorldViewState = AutoGhostMainWorldViewState.Verified
+            },
+            "TestFeature");
     }
 
     private static string CreateTempPath()
